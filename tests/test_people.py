@@ -1,4 +1,5 @@
 from swapi_tests.constants import RESPONSE_BODY_404, RESPONSE_BODY_405
+from swapi_tests.model.people import People, ListPeople
 
 
 class TestPeople:
@@ -7,16 +8,21 @@ class TestPeople:
             response = api_session.request(path='people/')
             assert response.status_code == 200
             assert response.headers.get('content-type') == 'application/json'
+            people = ListPeople.model_validate(response.json())
 
         def test_get_first_people(self, api_session):
             response = api_session.request(path='people/1/')
             assert response.status_code == 200
-            assert response.json()['name'] == 'Luke Skywalker'
+            assert response.headers.get('content-type') == 'application/json'
+            person = People.model_validate(response.json())
+            assert person.name == 'Luke Skywalker'
 
         def test_get_second_people(self, api_session):
             response = api_session.request(path='people/2/')
             assert response.status_code == 200
-            assert response.json()['name'] == 'C-3PO'
+            assert response.headers.get('content-type') == 'application/json'
+            person = People.model_validate(response.json())
+            assert person.name == 'C-3PO'
 
         def test_get_without_header_user_agent(self, api_destruction_session):
             api_destruction_session.headers.pop('user-agent')
