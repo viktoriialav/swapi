@@ -28,4 +28,3 @@ class ListPeople(BaseModel):
     previous: None
     results: list[People]
 
-
