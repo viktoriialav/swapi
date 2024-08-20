@@ -1,7 +1,7 @@
 import allure
 
-from swapi_tests.constants import RESPONSE_BODY_404, RESPONSE_BODY_405
-from swapi_tests.model.people import People, ListPeople
+from swapi_tests.models.people import People, ListPeople
+from swapi_tests.utils.constants import RESPONSE_BODY_404, RESPONSE_BODY_405
 
 
 @allure.feature('People')

@@ -1,6 +1,6 @@
 import pytest
 
-from swapi_tests.api_session import TestSession
+from swapi_tests.models.api_session import TestSession
 
 
 @pytest.fixture(scope='session')
