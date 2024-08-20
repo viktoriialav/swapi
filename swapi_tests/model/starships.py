@@ -26,7 +26,7 @@ class StarShip(BaseModel):
 
 class ListStarShips(BaseModel):
     count: Annotated[int, Field(strict=True, gt=0)]
-    next: Annotated[str, StringConstraints(min_length=1, max_length=100)]
+    next: Annotated[str | None, StringConstraints(min_length=1, max_length=100)]
     previous: None
     results: list[StarShip]
 

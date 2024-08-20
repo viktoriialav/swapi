@@ -35,16 +35,22 @@ class TestPeople:
             assert response.status_code == 200
             assert response.headers.get('content-type') == 'application/json'
 
-        def test_search_people_by_name(self, api_session):
+        def test_search_particular_person_by_name(self, api_session):
             params = {'search': 'R5-D4'}
             response = api_session.request(path='people/', params=params)
             assert response.status_code == 200
             assert response.headers.get('content-type') == 'application/json'
-            person = People.model_validate(response.json()['results'][0])
-            # person = ListPeople.model_validate(response.json())
-            # assert person.results[0].name == params['search']
-            assert person.name == params['search']
+            person = ListPeople.model_validate(response.json())
+            assert person.results[0].name == params['search']
 
+        def test_search_people_by_part_of_name(self, api_session):
+            params = {'search': 'r'}
+            response = api_session.request(path='people/', params=params)
+            assert response.status_code == 200
+            assert response.headers.get('content-type') == 'application/json'
+            people = ListPeople.model_validate(response.json())
+            assert sum(params['search'].lower() in person.name.lower() for person in people.results) == len(
+                people.results)
 
     @allure.story('Negative tests')
     class TestNegative:
@@ -62,4 +68,3 @@ class TestPeople:
             response = api_session.request(path='people/adsdasd')
             assert response.status_code == 404
             assert response.json() == RESPONSE_BODY_404
-

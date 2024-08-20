@@ -29,21 +29,32 @@ class TestStarShips:
             starship = StarShip.model_validate(response.json())
             assert starship.name == 'Death Star'
 
-        def test_search_starship_by_name(self, api_session):
+        def test_search_particular_starship_by_name(self, api_session):
             params = {'search': 'X-wing'}
             response = api_session.request(path='starships/', params=params)
             assert response.status_code == 200
             assert response.headers.get('content-type') == 'application/json'
-            starship = StarShip.model_validate(response.json()['results'][0])
-            assert starship.name == params['search']
+            starship = ListStarShips.model_validate(response.json())
+            assert starship.results[0].name == params['search']
 
         def test_search_starship_by_model(self, api_session):
             params = {'search': 'YT-1300 light freighter'}
             response = api_session.request(path='starships/', params=params)
             assert response.status_code == 200
             assert response.headers.get('content-type') == 'application/json'
-            starship = StarShip.model_validate(response.json()['results'][0])
-            assert starship.model == params['search']
+            starship = ListStarShips.model_validate(response.json())
+            assert starship.results[0].model == params['search']
+
+        def test_search_starships_by_part_of_name_or_model(self, api_session):
+            params = {'search': 'r'}
+            response = api_session.request(path='starships/', params=params)
+            assert response.status_code == 200
+            assert response.headers.get('content-type') == 'application/json'
+            starships = ListStarShips.model_validate(response.json())
+            assert sum(
+                params['search'].lower() in starship.name.lower() or params['search'].lower() in starship.model.lower()
+                for starship in starships.results) == len(starships.results)
+            pass
 
     @allure.story('Negative tests')
     class TestNegative:
